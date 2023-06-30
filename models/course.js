@@ -14,7 +14,7 @@ const courseSchema = mongoose.Schema({
         required:true 
     } ,
     price :{
-        type: Integer ,
+        type: Number ,
         required :true 
     } ,
     imageLink: {
