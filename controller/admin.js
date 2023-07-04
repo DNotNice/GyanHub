@@ -11,12 +11,12 @@ async function adminSignup(req ,res){
     })
     const user = await ADMIN.findOne({username})
     if(!user){
-     const addeduser =   await  ADMIN.create({
+     const admin =   await  ADMIN.create({
             username : username,
             password : password,
             courses : []
         })    
-       token = await signJWT(username , addeduser._id , 'admin')
+       token = await signJWT(username , admin._id , 'admin')
     }else{
         return res.status(400).json({
             message: 'admin already exists'
@@ -30,13 +30,19 @@ async function adminSignup(req ,res){
 }
 
 async function adminLogin(req ,res) {
-    const { username } = req.headers;
-    const user = await ADMIN.findOne({
+    const { username  , password} = req.headers;
+    const admin = await ADMIN.findOne({
         username 
     })
-
-    if(!user)return res.status(400).json({message:'invalid login credentials'})
-    const admintoken = await signJWT(username , user._id , 'admin') ;
+    let passCheck = false
+    if(admin){
+         passCheck =  await admin.comparePassword(password)
+         if(!passCheck) return res.status(401).json({
+        message:'wrong password'
+       })
+    }
+    if(!admin)return res.status(401).json({message:'invalid login credentials'})
+    const admintoken = await signJWT(username , admin._id , 'admin') ;
     return res.status(200).json({
         message : 'admin login successful',
         token : admintoken

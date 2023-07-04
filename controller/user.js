@@ -33,9 +33,14 @@ async function userSignup(req ,res){
 async function userLogin(req ,res){
         const { username , password} = req.headers;
         const user = await USER.findOne({
-            username ,password
+            username : username
         })
-        if(!user)return res.status(400).json({message:'invalid login credentials'})
+        let passCheck = false
+        if(user) passCheck =  await user.comparePassword(password)
+       if(!passCheck) return res.status(401).json({
+        message:'wrong password'
+       })
+        if(!user)return res.status(401).json({message:'invalid login credentials'})
         const token = await signJWT(username , user._id ,'user')
         return res.status(200).json({
             message : 'user login successful',
