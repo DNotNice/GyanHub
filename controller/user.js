@@ -51,22 +51,30 @@ async function allCourses(req,res){
 }
 
 async function purchaseCourse(req, res){
-    const course = await COURSE.findById(req.params.courseId)
-    if(course){
-        const user = await USER.findOne({ username : req.user.username});
-         user.courses.push(course._id);
-         await user.save(); 
-    }else return res.status(402).json({ message : 'courseId empty or not valid'})
+    const emp  = req.params.courseId
+    const cousrseId = emp.substring(1)
+    const username = req.user.username
+    const userid  = req.user._id
+    try {
+        const wcourse = await COURSE.findOne({ _id : cousrseId})
+        const user = await USER.findOne( {_id : userid})     
+        user.courses.push(wcourse._id)
+        await user.save(); 
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({message : 'err occ'})   
+    }
     return res.status(200).json({
         message :'course purchased successfully',
-        courseId : course
+        courseId : cousrseId,
+        purchasedBy : username
     })
 }
 async function UserCourses(req, res){
-     const user = await USER.findOne({ username : req.user.username}).populate('courses')
+     const user = await USER.findOne({ _id : req.user._id}).populate('courses')
      if(user){
         return res.status(200).json({
-            message:'all user purchased courses',
+            user: user.username,
             UserCourses: user.courses
         })
      }else{

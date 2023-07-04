@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
     }] ,
     courses: [{
         type:mongoose.Schema.Types.ObjectId  ,
-        ref : "course"
+        ref : 'course'
     }]
     
 } , {timestamps : true })
