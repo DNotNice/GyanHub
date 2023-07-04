@@ -5,9 +5,9 @@ const staticRouter = require('./routes/staticRout')
 const adminRoute = require('./routes/admin')
 const userRoute = require('./routes/user')
 const app = express();
-const port = 2999
-
-app.use('/user' , userRoute)
+const port = 3000
+app.use(express.json());
+app.use('/users' , userRoute)
 app.use('/admin' , adminRoute)
 app.use('/' , staticRouter)
 

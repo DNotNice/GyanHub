@@ -11,10 +11,8 @@ const adminSchema  = mongoose.Schema({
         required:true 
     } ,
     courses: [{
-         courseId : {
              type: mongoose.Schema.Types.ObjectId ,
-             ref :'courses'
-        }
+             ref :'course'
     }]
 } , {timestamps:true}
 )

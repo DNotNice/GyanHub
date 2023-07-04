@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const userSchema = mongoose.Schema({
-    email:{
+    username:{
         type:String,
         required:true ,
         unique:true
@@ -10,14 +10,13 @@ const userSchema = mongoose.Schema({
         required:true 
     } ,
     purchases:[{
-        purchaseId : { type : mongoose.Schema.Types.ObjectId ,
-                        ref: "purchases"
-                    }
+        type : mongoose.Schema.Types.ObjectId ,
+        ref: "purchase"
+                    
     }] ,
     courses: [{
-        courseId : { type:mongoose.Schema.Types.ObjectId  ,
-                    ref : "courses"
-                }
+        type:mongoose.Schema.Types.ObjectId  ,
+        ref : "course"
     }]
     
 } , {timestamps : true })
