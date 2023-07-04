@@ -81,7 +81,7 @@ async function updateCourse(req, res){
     const published = false 
     try {
     const course = await COURSE.findOneAndUpdate({
-        _id:courseId
+        courseId:courseId
     }, {
         courseTitle:title , courseDesc:courseDesc , price:price , updatedLink:updatedLink , published  
     } , {
@@ -89,7 +89,8 @@ async function updateCourse(req, res){
     })
 
     return res.status(202).json({
-        message :"course updated successfully"
+        message :"course updated successfully",
+        courseId : courseId 
     })
 } catch (error) {
     console.log(error)
@@ -99,6 +100,7 @@ async function updateCourse(req, res){
     })       
 }
 }
+
 async function allCourses(req ,res){
     const userId  = req.user._id ;
     try {

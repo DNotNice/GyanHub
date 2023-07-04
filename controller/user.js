@@ -31,9 +31,9 @@ async function userSignup(req ,res){
 }
 
 async function userLogin(req ,res){
-        const { username} = req.headers;
+        const { username , password} = req.headers;
         const user = await USER.findOne({
-            username 
+            username ,password
         })
         if(!user)return res.status(400).json({message:'invalid login credentials'})
         const token = await signJWT(username , user._id ,'user')
@@ -56,7 +56,7 @@ async function purchaseCourse(req, res){
     const username = req.user.username
     const userid  = req.user._id
     try {
-        const wcourse = await COURSE.findOne({ _id : cousrseId})
+        const wcourse = await COURSE.findOne({ courseId : cousrseId})
         const user = await USER.findOne( {_id : userid})     
         user.courses.push(wcourse._id)
         await user.save(); 
@@ -70,6 +70,8 @@ async function purchaseCourse(req, res){
         purchasedBy : username
     })
 }
+
+
 async function UserCourses(req, res){
      const user = await USER.findOne({ _id : req.user._id}).populate('courses')
      if(user){
