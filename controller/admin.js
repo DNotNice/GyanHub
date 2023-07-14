@@ -30,22 +30,28 @@ async function adminSignup(req ,res){
 }
 
 async function adminLogin(req ,res) {
-    const { username  , password} = req.headers;
-    const admin = await ADMIN.findOne({
-        username 
-    })
+    const { username  , password} = req.body;
+    const admin = await ADMIN.findOne({username })
     let passCheck = false
     if(admin){
+        console.log('found you')
          passCheck =  await admin.comparePassword(password)
          if(!passCheck) return res.status(401).json({
         message:'wrong password'
        })
     }
-    if(!admin)return res.status(401).json({message:'invalid login credentials'})
+    if(!admin){
+        return res.status(401).json({message:'invalid login credentials'})}
     const admintoken = await signJWT(username , admin._id , 'admin') ;
     return res.status(200).json({
         message : 'admin login successful',
         token : admintoken
+    })
+}
+async function meRoute(req,res){
+    console.log(req.user.username)
+    res.json({
+        username: req.user.username
     })
 }
 
@@ -78,23 +84,23 @@ async function addCourse(req ,res){
     } 
 }
 async function updateCourse(req, res){
-    const temp = req.params.courseId
-    const courseId = temp.substring(1);
+    const courseId = req.params.courseId;
     const title = req.body.title 
-    const courseDesc = req.body.description
+    const courseDesc = req.body.Desc
     const price = parseInt(req.body.price,10)
-    const updatedLink = req.body.link 
-    const published = false 
+    const imageLink = req.body.image 
+    const published = true
     try {
     const course = await COURSE.findOneAndUpdate({
         courseId:courseId
     }, {
-        courseTitle:title , courseDesc:courseDesc , price:price , updatedLink:updatedLink , published  
+        courseTitle:title , courseDesc:courseDesc , price:price , imageLink:imageLink , published  
     } , {
         new:true 
-    })
+    })  
+  
 
-    return res.status(202).json({
+   return res.status(202).json({
         message :"course updated successfully",
         courseId : courseId 
     })
@@ -113,7 +119,7 @@ async function allCourses(req ,res){
     const user = await ADMIN.findOne({_id: userId }).populate('courses');
     return res.status(200).json({
         message :"all courses fetched",
-        courses : user
+        courses : user.courses
     })
 
     } catch (error) {
@@ -124,6 +130,20 @@ async function allCourses(req ,res){
         })
     }
 }
+async function getCourse(req ,res){
+    try {
+    const courseId = req.params.courseId;
+    const course = await COURSE.findOne({courseId}) 
+    res.json({
+        course
+    })   
+    } catch (error) {
+        console.log(error)
+        res.json({
+            message:'something went wrong'
+        })
+    }
+}
 
 
-module.exports = {adminSignup, adminLogin , addCourse , updateCourse,allCourses}
+module.exports = {adminSignup, adminLogin , addCourse , updateCourse,allCourses ,meRoute,getCourse}
